@@ -1,0 +1,27 @@
+# Phase 9: The Experiment Wizard Completed!
+
+I have officially completed Step 3 of our Frontend roadmap: The Experiment Wizard (Projects) page!
+
+## What was built:
+
+### 1. The Interactive Wizard Component
+- Built a highly interactive React Client Component (`components/ExperimentWizard.tsx`).
+- It successfully pulls all of your datasets from the database into the first dropdown.
+- **Dynamic Field Generation:** Once you select a dataset, it parses the `columnSchema` JSON from your database and instantly populates the second dropdown with every single column name inside that specific CSV! This allows you to visually select your `targetColumn` (the column you want the AI to predict).
+- Allows you to seamlessly toggle between `REGRESSION` and `CLASSIFICATION` tasks.
+
+### 2. The Server Projects Page
+- Built `app/(dashboard)/experiments/page.tsx` as a blazing fast Next.js Server Component.
+- It features a two-column layout: the Wizard on the left, and an **Active Experiments** data table on the right.
+- The data table reads your Prisma relations to display not just the experiment details, but also the human-readable Dataset Name it was trained on.
+- Features dynamic, color-coded status badges for `QUEUED` (yellow), `TRAINING` (blue), `COMPLETED` (green), and `FAILED` (red).
+
+### 3. API Integration
+- The "Start Training" button turns into a spinning loader while it hits your `POST /api/experiments` endpoint.
+- As soon as the endpoint successfully saves to Postgres and pushes to Upstash Redis, the form clears and triggers `router.refresh()`. The table on the right will instantly update to show your new experiment as `QUEUED`!
+
+> [!TIP]
+> **Test it out!**
+> Go to `http://localhost:3000/experiments` in your browser. Select one of your uploaded datasets, pick a column to predict, and click **Start Training**. If your Python worker is running, you will see it instantly pick up the job from Redis!
+
+Let me know if you would like me to adjust any of the styling or if you are ready to move on to the next phase!

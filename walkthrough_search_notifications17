@@ -1,0 +1,13 @@
+# Search and Live Notifications Complete
+
+Both features have been built and deployed to the frontend!
+
+## What Changed?
+- **Global Search**: The "Search AI Catalog..." input box in the top header is now fully functional. When you type in a dataset name and hit `Enter`, you are automatically redirected to your Datasets page, which instantly filters the database to show only matching datasets.
+- **Live Notifications**: The bell icon in the top right corner is now active. It checks in the background every 10 seconds to see if the Python Machine Learning Worker has finished any training jobs. 
+- **Unread Indicators**: If a model finishes training while you are working in the dashboard, the bell icon will pulse with a green dot to notify you.
+- **Dropdown View**: Clicking the bell opens a dropdown that lists your recently completed or failed training jobs. It also includes a quick "Refresh App" button to easily load the new models into your UI!
+
+## How to Test
+1. **Search**: Type the name of one of your existing datasets into the search bar at the top and hit `Enter`. 
+2. **Notifications**: Click the Bell icon in the top right. It should drop down and list your most recent ML experiments. (If you train a new model now, you'll see it pulse green automatically when the ML worker finishes!).

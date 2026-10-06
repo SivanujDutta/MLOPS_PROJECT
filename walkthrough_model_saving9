@@ -1,0 +1,31 @@
+# Phase 5: Model Cloud Storage & Database Sync
+
+Your Python worker is now fully syncing its AI models with the cloud and your Postgres database! Here is exactly how the new data flow works:
+
+## What was built:
+
+1. **Model Serialization (`joblib`)**
+   - After the final Optuna-tuned model finishes training, it is serialized (compressed and saved to disk) as a `.joblib` file.
+   - *Why Joblib?* It is the absolute industry standard for saving `scikit-learn` models, significantly faster and more efficient than Python's built-in `pickle` for large numpy arrays.
+
+2. **AWS S3 Integration**
+   - The worker uses `boto3` to take that local `.joblib` file and push it up into your AWS S3 bucket.
+   - It is saved securely inside a folder specific to the experiment: `models/{experiment_id}/model.joblib`.
+   - It generates the absolute S3 URL so the frontend knows exactly where to download it later for deployments.
+
+3. **Schema-Correct Postgres Sync**
+   - We caught a major bug! Previously, we were trying to save `metrics` to the `Experiment` table, but your Prisma schema dictates that metrics actually belong in the `Model` table.
+   - The worker now correctly runs a raw SQL `UPDATE` on the `Experiment` table just to mark its status as `COMPLETED`.
+   - It then generates a unique UUID and runs a raw SQL `INSERT INTO "Model"` to create a brand new database record! 
+   - This new record contains:
+     - `algorithmName`
+     - `hyperparameters` (Optuna output)
+     - `featureImportance` (SHAP output)
+     - `metrics` (Accuracy / MSE)
+     - `s3ModelPath` (The S3 download URL)
+
+**The entire backend ML Pipeline is completely finished.** 
+
+It pulls data from S3, trains and tunes a model, generates feature importance, saves the model back to S3, and writes all the metadata perfectly into your Neon Postgres database.
+
+Let me know when you're ready to switch to **Next.js** so we can build the user interface!

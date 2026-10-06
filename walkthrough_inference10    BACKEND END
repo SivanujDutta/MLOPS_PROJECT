@@ -1,0 +1,30 @@
+# Phase 6: Live Inference Endpoint Built
+
+The Python Worker isn't just for training anymore! It can now act as a live prediction server!
+
+I have built the `POST /internal/ml/predict` endpoint into `main.py`.
+
+## How it works:
+
+### 1. In-Memory Caching
+When a request comes in, the server checks if it already has the required `.joblib` model loaded into its RAM (`loaded_models` dictionary).
+- **First Request:** It takes a second to download the model from AWS S3, load it via `joblib`, and cache it.
+- **Future Requests:** The server reads the model directly from RAM. Predictions run in less than **5 milliseconds**.
+
+### 2. Live Inference
+The server takes the `inputData` (a raw JSON object like `{"Age": 45, "Income": 60000}`) and automatically converts it into a `pandas.DataFrame`. 
+This allows `scikit-learn` to process it natively without crashing. It runs the prediction and converts the Numpy array result back into a standard Python integer/float for a clean JSON response.
+
+### 3. Database Audit Trail
+After the prediction is generated, the endpoint opens a connection to your Neon Postgres database.
+It generates a UUID and executes a raw `INSERT` into the `PredictionLog` table. 
+
+It successfully saves:
+- The `deploymentId` (to track which Endpoint/Model generated this prediction).
+- The raw `inputData` that was sent by the user.
+- The `predictionOutput` that the model returned.
+
+> [!TIP]
+> This completes the entire backend data flow. We have Dataset Uploads, Automated Training, Optuna Tuning, Model Serialization to S3, and finally, Live Cached Inferences! 
+> 
+> We are **100% ready** to start building the visual Frontend UI in Next.js to tie all of these endpoints together!

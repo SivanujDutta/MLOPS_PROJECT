@@ -1,0 +1,48 @@
+# Verify Email & Forgot Password Implementation
+
+This plan outlines the steps to build the email-based authentication features using your existing Prisma schema (`verifyEmailToken`, `forgotPasswordToken`, etc.) and `nodemailer` for email delivery.
+
+## Proposed Changes
+
+We will build four new API endpoints and an email utility to handle the complete password reset and email verification lifecycles.
+
+### 1. Dependencies
+- Install `nodemailer` and `@types/nodemailer` to handle SMTP email sending.
+
+### 2. Utilities
+#### [NEW] `lib/email.ts`
+- Create a reusable Nodemailer transport configuration.
+- Add helper functions: `sendVerificationEmail(to, token)` and `sendPasswordResetEmail(to, token)`.
+- It will read SMTP credentials from your `.env` file.
+
+### 3. API Routes
+
+#### [NEW] `app/api/auth/verify-email/send/route.ts`
+- Generates a secure random 32-byte hex token.
+- Updates the user's `verifyEmailToken` and `verifyEmailTokenExpiry` (e.g., 24 hours from now) in the database.
+- Uses `lib/email.ts` to email a verification link to the user.
+
+#### [NEW] `app/api/auth/verify-email/confirm/route.ts`
+- Accepts the `token` from the URL.
+- Looks up the user by token.
+- Checks if the token has expired.
+- If valid, updates `isEmailVerified` to `true` and nullifies the token fields.
+
+#### [NEW] `app/api/auth/forgot-password/route.ts`
+- Accepts an `email` address.
+- If the user exists, generates a random hex token.
+- Updates `forgotPasswordToken` and `forgotPasswordTokenExpiry` (e.g., 1 hour from now).
+- Uses `lib/email.ts` to send the password reset link.
+
+#### [NEW] `app/api/auth/reset-password/route.ts`
+- Accepts the `token` and a `newPassword`.
+- Looks up the user by token and checks expiration.
+- Hashes the `newPassword` using `bcryptjs`.
+- Updates the user's `passwordHash` and nullifies the token fields.
+
+## Open Questions
+
+> [!WARNING]
+> To send actual emails, you will need an SMTP server (like a free SendGrid, Resend, or even a Gmail account with an App Password). I will write the code to use generic `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS` environment variables. You will need to provide your own SMTP credentials in your `.env` file to test it!
+
+Please review this plan and click **Proceed** if you're ready for me to build out these endpoints!

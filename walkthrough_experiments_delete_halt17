@@ -1,0 +1,23 @@
+# Delete and Halt Functionality Added
+
+You now have complete control over the lifecycle of your ML experiments directly from the dashboard UI!
+
+## Feature Breakdown
+
+### Action Buttons
+A new action button has been added to the right side of every experiment row in the Active Experiments table.
+
+- **Halt Button (Red Stop Icon):**
+  - Appears for experiments that are currently in `QUEUED`, `TUNING`, or `TRAINING` status.
+  - When you click it, you are asked for confirmation. Upon confirmation, the backend deletes the experiment.
+  - *Behind the scenes:* Because the experiment record is removed from the database, the Python ML worker will encounter an immediate failure when it tries to save the model, effectively short-circuiting and stopping the background job without crashing the server!
+
+- **Delete Button (Trash Icon):**
+  - Appears for experiments that are `COMPLETED` or `FAILED`.
+  - Clicking this performs a secure, cascading deletion.
+  - *Behind the scenes:* To maintain database integrity, it safely wipes out any associated Models, active Deployments, and all underlying Prediction Logs before finally deleting the Experiment itself.
+
+## How to Test
+1. Head over to the **Projects** page.
+2. If you have any old completed experiments you no longer need, click the Trash icon to delete them.
+3. Start a new dummy experiment from the wizard. While it says `TRAINING`, click the red Stop icon. It will immediately be removed from the list, and you'll see the Python worker gracefully fail and exit out of the job!

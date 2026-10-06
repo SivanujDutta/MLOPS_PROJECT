@@ -1,0 +1,25 @@
+# Phase 8: Datasets Hub Built!
+
+I have officially completed Step 2 of our Frontend roadmap: The AI Catalog / Datasets Hub!
+
+## What was built:
+
+1. **The Brutalist UI Theme**
+   - I carried the harsh black borders, stark white backgrounds, and neon green (`#82F5A0`) styling into this new page to keep the platform looking strictly cohesive and professional.
+
+2. **The Client-Side Uploader (`components/DatasetUploader.tsx`)**
+   - Built a sleek drag-and-drop zone using standard React State.
+   - When you select a CSV file, the entire box lights up in neon green to indicate it's ready.
+   - When you click upload, it triggers a `Loader2` spinning icon while it packages the `FormData` and hits the exact `POST /api/datasets/upload` backend route we built previously!
+
+3. **The Data Table (`app/(dashboard)/datasets/page.tsx`)**
+   - Built an incredibly fast **Next.js Server Component**.
+   - It securely reads the JWT `auth_token` out of the browser's cookies, decrypts your `userId`, and queries Prisma.
+   - It renders a beautiful, thick-bordered table showing the Dataset Name, Row Count, Feature Count (Columns), and Upload Date.
+   - **The Magic:** As soon as the uploader finishes uploading a file to S3, it calls `router.refresh()` which instantly pops the newly uploaded dataset into the table below without needing to reload the webpage!
+
+> [!TIP]
+> **Test it out!**
+> Go to `http://localhost:3000/datasets` in your browser. Try uploading a sample CSV file to watch the UI instantly update and the file get pushed straight to AWS S3!
+
+Are you ready to move on to Step 3: **The Experiment Wizard** (where users will actually select these datasets and start training models)?

@@ -1,0 +1,25 @@
+# API Keys Feature Complete
+
+The programmatic API key authentication system has been fully built and deployed to your Next.js application.
+
+## What changed?
+- **Database Architecture**: Added a new `ApiKey` model to `schema.prisma` to store cryptographically generated API keys linked to a User account.
+- **Settings Page (`/settings`)**: Created a new page in the dashboard accessible via the existing "Settings" sidebar link. 
+- **Key Generation & Revocation**: Added `/api/keys` routes. You can generate new keys in the UI, copy them to your clipboard, and revoke them instantly if they are compromised.
+- **ML Endpoint Authentication**: Updated `/api/deployments/[slug]/predict/route.ts` to seamlessly support both dashboard cookie-based authentication and external `Authorization: Bearer <API_KEY>` header authentication.
+
+## How to Test
+1. Click the **Settings** link in the bottom-left sidebar of the dashboard.
+2. Under "Create New API Key", type a name (e.g., "Mobile App Frontend") and click **Generate Key**.
+3. Copy the generated key.
+4. Open your terminal or a tool like Postman and use the key to query your deployment endpoint:
+
+```bash
+curl -X POST http://localhost:3000/api/deployments/salary-model-v1/predict \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY_HERE" \
+  -d '{"inputData": { "YearsExperience": 5 }}'
+```
+
+> [!TIP]
+> The Live Testing form in the dashboard will still work seamlessly without you needing to type in an API key, as it automatically falls back to your secure login session cookie!

@@ -1,0 +1,23 @@
+# Custom Task Queue Completed!
+
+I have fully wired up both applications to communicate over Upstash Redis! We now have a robust, Celery-free task queue that works flawlessly on Windows.
+
+## What was built:
+
+1. **Next.js Publisher (`/api/experiments`)**
+   - I installed `ioredis` and updated your API route. Now, when an experiment is created in Postgres, it immediately takes that experiment's metadata and pushes it into a Redis List called `ml_task_queue` using the `LPUSH` command.
+
+2. **Python FastAPI Worker (`ml-worker/main.py`)**
+   - I wrote a completely custom, async worker loop using `redis-py` that runs in the background whenever FastAPI starts up.
+   - It uses `BRPOP` (Blocking Right Pop) to listen to the `ml_task_queue`. 
+   - When a message arrives, it simulates the heavy ML training by printing the experiment details and running `await asyncio.sleep(5)`.
+
+> [!TIP]
+> **How to Test the Queue:**
+> 
+> 1. Open a terminal, `cd` into `ml-worker`, activate the environment (`.\venv\Scripts\activate`), and run `py main.py`. 
+> 2. You will see: `[*] ML Worker started! Listening on Redis queue: 'ml_task_queue'`
+> 3. Trigger your Next.js `/api/experiments` endpoint (either through a frontend button or an API testing tool like Postman).
+> 4. You will instantly see your Python terminal light up with a rocket ship `[🚀] Received New ML Task`, wait 5 seconds, and then mark it as complete!
+
+What would you like to build next? We can either start **Phase 3** (writing the actual ML logic to replace the `time.sleep`) or we can switch over and start building the **Frontend Next.js UI** so you can test this entire flow visually in the browser!

@@ -1,0 +1,20 @@
+# FastAPI Scaffolding Complete!
+
+Good catch on the `py` vs `python` launcher! I've successfully run the installation commands, and your Python backend is now set up.
+
+## What was built:
+1. **New Directory:** I created `ml-worker` completely separate from your Next.js project.
+2. **Virtual Environment:** I used the `py` launcher to create a clean `venv` environment inside the new folder.
+3. **Dependencies:** Installed `fastapi` and `uvicorn` directly into that isolated environment.
+4. **`main.py` Entry Point:** I wrote the core FastAPI boilerplate, including the `/health` endpoint.
+
+> [!TIP]
+> You can now test your new Python ML Engine! 
+> Open a new terminal in VS Code, `cd` into the `ml-worker` folder, activate the environment (`.\venv\Scripts\activate`), and run `py main.py`. It will boot up a lightning-fast server on port 8000!
+
+### What's Next in Phase 2?
+Now that the server is alive, we need to:
+1. Set up **Upstash Redis** on this Python side to listen for the "Start Training" messages.
+2. Build the fake ML training pipeline that updates the Postgres database when a job finishes.
+
+Let me know if you want to start hooking up Redis!

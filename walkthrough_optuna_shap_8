@@ -1,0 +1,40 @@
+# Advanced ML Upgrades Complete!
+
+Your MLOps platform is now officially performing **Automated Machine Learning (AutoML)**! 
+
+I have fully upgraded your Python worker to use Optuna for hyperparameter tuning and SHAP for game-theoretic feature importance.
+
+## What was built:
+
+1. **Optuna AutoML**
+   - In `trainer.py`, instead of hard-coding the parameters for the Random Forest, I wrote an Optuna `objective` function. 
+   - It now runs **10 unique trials**, intelligently guessing different combinations of `n_estimators` and `max_depth`. 
+   - It finds the absolute best combination for the user's specific dataset and uses that to train the final, production-ready model!
+
+2. **SHAP Feature Importance**
+   - Once the final model is trained, the script boots up a `shap.TreeExplainer`.
+   - It calculates the mean absolute SHAP value for every single feature in the dataset (essentially measuring mathematically how much each column influenced the final prediction).
+   - It sorts them from most important to least important.
+
+3. **Postgres JSONB Integration**
+   - The final `metrics` payload sent to Postgres now looks something like this:
+     ```json
+     {
+       "accuracy": 0.94,
+       "best_params": {
+         "max_depth": 15, 
+         "n_estimators": 120
+       },
+       "feature_importance": {
+         "Age": 0.42,
+         "Income": 0.31,
+         "Location_Score": 0.12
+       }
+     }
+     ```
+   - Because we used a `JSONB` column in Prisma back in Phase 1, the database accepted this massive structural change without a single migration!
+
+> [!TIP]
+> You can test this right now! Start your server (`python main.py`), ping your Next.js API route, and watch the Python terminal run through all 10 Optuna trials before printing the Top 3 Features!
+
+**Phase 4 is complete!** Would you like to finally switch to Next.js and build the **Frontend UI** so we can see all of this data visually?

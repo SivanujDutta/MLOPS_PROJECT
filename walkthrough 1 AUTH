@@ -1,0 +1,24 @@
+# Custom Authentication System Built!
+
+I have successfully built out the custom Next.js authentication system exactly as planned!
+
+## What was implemented:
+1. **Dependencies Installed**: Added `bcryptjs` and `jose` to handle password hashing and Edge-compatible JSON Web Tokens.
+2. **Global Prisma Client**: Created [`lib/prisma.ts`](file:///c:/Users/swapn/OneDrive/Desktop/Event%20Manager/nextjs-prisma/lib/prisma.ts) to prevent the "too many database connections" error during local development hot-reloads.
+3. **Auth Utilities**: Built [`lib/auth.ts`](file:///c:/Users/swapn/OneDrive/Desktop/Event%20Manager/nextjs-prisma/lib/auth.ts) to handle the complex crypto logic (hashing, verifying passwords, signing JWTs).
+4. **API Routes**:
+   - `POST /api/auth/signup`: Hashes passwords, saves the User, and issues an HTTP-only JWT cookie.
+   - `POST /api/auth/login`: Checks credentials, issues the HTTP-only JWT cookie.
+   - `POST /api/auth/logout`: Clears the HTTP-only cookie.
+   - `GET /api/auth/me`: Verifies the cookie and returns the user's secure profile data from the database.
+5. **Next.js Middleware**: Created [`middleware.ts`](file:///c:/Users/swapn/OneDrive/Desktop/Event%20Manager/nextjs-prisma/middleware.ts) which runs on the Edge. It instantly intercepts requests to protected routes (`/dashboard`, `/api/datasets`, etc.) and ensures the user has a valid JWT cookie before allowing the request through!
+
+> [!IMPORTANT]
+> You must add a `JWT_SECRET` to your `.env` file! This is the cryptographic key used to sign your session cookies.
+
+Open your `.env` file and add a long, random string like this:
+```env
+JWT_SECRET="any_long_random_string_here_like_this_one_b8s7d8f9s"
+```
+
+Once that is added, your full authentication system is completely ready for your frontend to consume!

@@ -1,0 +1,31 @@
+# Feature Selection Implemented! 🎯
+
+Great catch on noticing the AI was being trained on irrelevant columns like `Sl. No.`. In the real world, training a model on IDs, Names, or Dates will ruin its accuracy and introduce massive bias. I have now built a robust **Feature Selection** pipeline to solve this!
+
+## What was built:
+
+### 1. Database Schema Update
+- I updated your Postgres database schema to include a `selectedFeatures` field inside the `Experiment` table. 
+- This ensures we have a permanent audit trail of exactly which columns the AI was trained on for compliance.
+
+### 2. The Experiment Wizard Update
+- Go back to the **Projects** page and start a new experiment.
+- You will notice a brand new **Step 4: Select Features** checklist!
+- Once you pick your target column, it automatically loads all other columns. You can now uncheck the blank `Sl. No.` column (now labeled `Unnamed Feature 1`) so the model ignores it completely!
+
+### 3. Python ML Worker (Data Filtering)
+- The Python backend now reads your `selectedFeatures` from Redis.
+- Before it trains the `RandomForestRegressor`, it runs `X = X[selected_features]`. This drops all unselected columns from the Pandas DataFrame, ensuring the AI only learns from the exact data you chose.
+
+### 4. Smart Deployment Forms
+- Finally, when you deploy the model on the **Deployments** page, the "Magic Form" will **only** ask you for the columns you selected!
+- Since you didn't train the model on the `Sl. No.` column, the Next.js frontend is smart enough to remove it from the testing UI.
+
+> [!TIP]
+> **Try it out!**
+> 1. Go to the **Projects** page (`/experiments`).
+> 2. Create a new experiment using your Dataset.
+> 3. Select `Salary` as the target.
+> 4. In **Step 4**, uncheck `Unnamed Feature 1` (which corresponds to your blank `Sl. No.` column).
+> 5. Click Start Training.
+> 6. Once it completes, go to **Deployments** and deploy it. The testing form will now only ask you for `YEARSEXPERIENCE`!

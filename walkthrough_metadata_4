@@ -1,0 +1,24 @@
+# Metadata & Experiment APIs Completed!
+
+I have built the two required endpoints to connect your Next.js frontend to the dataset and experiment tables in PostgreSQL.
+
+## What was built:
+
+1. **`GET /api/datasets`**: 
+   - When a logged-in user hits this route, it fetches every CSV dataset they have uploaded, sorted by `createdAt` (newest first).
+   - *Bonus:* I also included a quick Prisma relational join (`include: { experiments: true }`) so that when your frontend loads the datasets table, it instantly knows if any ML experiments are currently running on those files!
+
+2. **`POST /api/experiments`**:
+   - This is the "Start Training" trigger endpoint. 
+   - It performs several critical security checks:
+     - Is the user logged in?
+     - Does the `datasetId` actually exist?
+     - Does the dataset actually belong to this specific user? (So users can't train models on someone else's CSV file!).
+     - Does the requested `targetColumn` actually exist in the CSV headers we parsed earlier? (e.g., you can't tell it to predict "income" if there is no "income" column in the CSV).
+   - If everything passes, it creates an `Experiment` row in Postgres.
+   - The status is completely untouched by the backend, meaning Prisma uses the database default of `QUEUED`. 
+
+> [!NOTE]
+> Inside `app/api/experiments/route.ts`, you will notice I left a small `// TODO [PHASE 2]` comment right at the bottom. That is the exact line of code where we will push a message into Upstash Redis to wake up your Python worker!
+
+We have successfully finished all the Phase 1 APIs! Are you ready to start Phase 2 (Python FastAPI and Redis)?

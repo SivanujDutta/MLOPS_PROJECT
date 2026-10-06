@@ -1,0 +1,23 @@
+# Model Report Page Added
+
+Your Optuna tuning results and SHAP explainability values are now fully visualized in the dashboard!
+
+## Feature Breakdown
+
+### 1. New "View Report" Button
+In your **Projects** page, inside the Active Experiments table, any experiment that has finished training (`COMPLETED`) will now have a new button in the Actions column. It looks like a small **bar chart icon** next to the download button.
+
+Clicking this button will navigate you to a dedicated Model Report page.
+
+### 2. The Model Report Page
+The report page is divided into three brutalist sections:
+
+- **Performance KPI:** A massive block that displays the model's final Accuracy (if it was a classification task) or Mean Squared Error (if it was a regression task).
+- **Optuna Hyperparameters:** A bold grid that iterates over all the exact hyperparameters that Optuna selected during its tuning trials (e.g., `max_depth`, `n_estimators`, `criterion`). 
+- **SHAP Feature Importance Chart:** A custom horizontal bar chart built directly into the UI. It reads the SHAP values from your database and visualizes which features had the most global impact on the model's decision-making process. The features are sorted from highest impact to lowest.
+
+## How to Test
+1. Go to your **Projects** page.
+2. Find any `COMPLETED` experiment.
+3. Click the new **Bar Chart** icon in the Actions column.
+4. You will instantly see the Optuna parameters and SHAP charts rendered beautifully using your data!

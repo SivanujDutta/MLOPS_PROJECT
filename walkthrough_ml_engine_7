@@ -1,0 +1,24 @@
+# Phase 3: The Machine Learning Engine is Alive!
+
+We have successfully replaced the `asyncio.sleep(5)` placeholder with the real Machine Learning code! Your platform can now physically train datasets on the fly!
+
+## What was built:
+
+1. **Environment Config**
+   - I securely added your AWS S3 and Neon Postgres credentials to `ml-worker/.env`.
+
+2. **The `trainer.py` Pipeline**
+   I wrote the core `train_experiment(task_data)` function which does the following sequence when triggered by Redis:
+   - **Download:** Extracts the AWS S3 Key from the provided URL and uses `boto3.download_file` to securely pull your CSV down to the local worker machine.
+   - **Preprocess:** Uses `pandas.read_csv()` to load the data into memory, drops any missing values (`NaN`), and splits the columns into Features (`X`) and the User's selected Target Column (`y`).
+   - **Train:** Splits the data 80/20 and trains either a `RandomForestClassifier` or `RandomForestRegressor` based on what the user requested. It then calculates the Accuracy or Mean Squared Error!
+   - **Database Update:** Connects directly to Neon Postgres using `psycopg2` and runs a raw SQL query to update the Experiment's `status` to `COMPLETED` and saves the Accuracy score into the `metrics` JSONB column!
+
+3. **Concurrency Fix**
+   - In `main.py`, I wrapped the call in `await asyncio.to_thread(train_experiment, task_data)`. 
+   - This ensures that while `pandas` and `scikit-learn` are doing extremely heavy CPU math, the FastAPI web server doesn't freeze and can still answer `/health` pings!
+
+> [!TIP]
+> You can test this exact same way! Run `python main.py`, ping your Next.js API route with a valid `datasetId` and `targetColumn` from your database, and watch the Python terminal download the data from S3, train the model, and update your database!
+
+We are now officially ready to build the **Frontend UI** so you can test this out with real buttons and see the database updates live on screen!
